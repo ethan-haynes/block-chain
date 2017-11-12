@@ -1,27 +1,9 @@
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 from SocketServer import ThreadingMixIn
-import threading, json, time, hashlib, random
+import threading, json
+from .block import Block, first_block, next_block
 
-Block = lambda index, previousBlock, previousHash, timestamp, data: {
-    'index' : index,
-    'previousBlock' : previousBlock,
-    'previousHash' : previousHash,
-    'timestamp' : timestamp,
-    'data' : data,
-    'hash' : hashlib.sha256(str(random.random())).hexdigest()
-}
-
-getGenesisBlock = lambda : Block(0, 0, None, int(time.time()), 'genesis block')
-
-getNextBlock = lambda blockData: Block(
-    blockData['index'] + 1,
-    blockData['previousBlock'] + 1,
-    blockData['hash'],
-    int(time.time()),
-    "new data" + str(blockData['index'] + 1)
-)
-
-blocks = [getGenesisBlock()]
+blocks = [ first_block() ]
 
 class Handler(BaseHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
@@ -34,7 +16,7 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         message =  threading.currentThread().getName()
 
-        self.blockchain.append(getNextBlock(self.blockchain[-1:][0]))
+        self.blockchain.append(next_block(self.blockchain[-1:][0]))
 
         self.wfile.write(json.dumps({ 'blockchain': list(map(lambda b: str(b), self.blockchain)) }))
         self.wfile.write('\n')
