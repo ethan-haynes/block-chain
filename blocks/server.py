@@ -5,13 +5,13 @@ import threading, json, time, hashlib, random
 Block = lambda index, previousBlock, previousHash, timestamp, data: {
     'index' : index,
     'previousBlock' : previousBlock,
-    'previousHash' : str(previousHash),
+    'previousHash' : previousHash,
     'timestamp' : timestamp,
     'data' : data,
     'hash' : hashlib.sha256(str(random.random())).hexdigest()
 }
 
-getGenesisBlock = lambda : Block(0, 0, '0', int(time.time()), 'genesis block')
+getGenesisBlock = lambda : Block(0, 0, None, int(time.time()), 'genesis block')
 
 getNextBlock = lambda blockData: Block(
     blockData['index'] + 1,
