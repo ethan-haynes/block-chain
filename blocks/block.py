@@ -9,7 +9,7 @@ Block = lambda index, previous_block, previous_hash, timestamp, data: {
     'hash' : hashlib.sha256(str(random.random())).hexdigest()
 }
 
-first_block = lambda : Block (0, 0, None, int(time.time()), 'genesis block')
+first_block = lambda : Block (0, 0, None, int(time.time()), 'first block')
 
 next_block = lambda block_data: Block (
     block_data['index'] + 1,
